@@ -50,10 +50,6 @@ begin
 	case OPSelect is
 		when ALU_AND	=>							-- Bitwise AND
 			output <= input1 and input2;
-		when ALU_OR		=>							-- Bitwise OR
-			output <= input1 or input2;
-		when ALU_XOR	=>							-- Bitwise XOR
-			output <= input1 xor input2;
 		when ALU_ADD	=>							-- Add, overflow goes to outputHigh
 			temp := std_logic_vector(resize(unsigned(input1), WIDTH+1) + resize(unsigned(input2), WIDTH+1));
 			outputHigh(0) <= temp(WIDTH);
@@ -65,78 +61,12 @@ begin
 			temp_mul := std_logic_vector(signed(input1) * signed(input2));
 			outputHigh <= temp_mul(63 downto 32);
 			output <= temp_mul(31 downto 0);
-		when ALU_MULT_U =>																			-- multiply UNSIGNED
-			temp_mul := std_logic_vector(unsigned(input1) * unsigned(input2));
-			outputHigh <= temp_mul(63 downto 32);
-			output <= temp_mul(31 downto 0);
 		when ALU_SRL 	=>																			-- shift right LOGICAL
 			output <= std_logic_vector(shift_right(unsigned(input2), to_integer(unsigned(IRBits))));
-		when ALU_SRA 	=>																			-- shift right ARITHMETIC
-			-- shift
-			--temp(31 downto 0) := std_logic_vector(shift_right(signed(input2), to_integer(unsigned(IRBits))));
-			-- extend the sign bit
-			--temp(31 downto 32 - to_integer(unsigned(IRBits))) := (others => input1(31));
-			output <= std_logic_vector(shift_right(signed(input2), to_integer(unsigned(IRBits))));
-		when ALU_SLL 	=>																			-- shift left
-			output <= std_logic_vector(shift_left(unsigned(input2), to_integer(unsigned(IRBits))));
-		when ALU_SLT_S 	=>																			-- SIGNED Set if less than
-			if(signed(input1) < signed(input2)) then
-				output <= "00000000000000000000000000000001";
-			else
-				output <= (others => '0');
-			end if;
-		when ALU_SLT_U	=>																			-- UNSIGNED Set if less than
-			if(unsigned(input1) < unsigned(input2)) then
-				output <= "00000000000000000000000000000001";
-			else
-				output <= (others => '0');
-			end if;
-		when ALU_BEQ 	=>																			-- Compare equal, branch
-			output <= std_logic_vector(unsigned(input1) + unsigned(input2));
-			if(unsigned(input1) = unsigned(input2)) then
-				branched <= '1';
-			else
-				branched <= '0';
-			end if;
-		when ALU_BNE	=> 																			-- Compare not equal, branch
-			output <= std_logic_vector(unsigned(input1) + unsigned(input2));
-			if(unsigned(input1) /= unsigned(input2)) then
-				branched <= '1';
-			else
-				branched <= '0';
-			end if;
-		when ALU_BGE	=>																			-- compare greater equal than 0, branch
-			output <= std_logic_vector(unsigned(input1) + unsigned(input2));
-
-			if(unsigned(input1) >= 0) then
-				branched <= '1';
-			else
-				branched <= '0';
-			end if;
-		when ALU_BGT	=>																			-- compare greater than 0, branch
-			output <= std_logic_vector(unsigned(input1) + unsigned(input2));
-			if(unsigned(input1) > 0) then
-				branched <= '1';
-			else
-				branched <= '0';
-			end if;
-		when ALU_BLE	=>																			-- compare less equal than 0, branch
-			output <= std_logic_vector(unsigned(input1) + unsigned(input2));
-			if(unsigned(input1) <= 0) then
-				branched <= '1';
-			else
-				branched <= '0';
-			end if;
-		when ALU_BLT	=>																			-- compare less than 0, branch
-			output <= std_logic_vector(unsigned(input1) + unsigned(input2));
-			if(unsigned(input1) < 0) then
-				branched <= '1';
-			else
-				branched <= '0';
-			end if;
-		when others =>
-			output <= input1;
+		
+	-- REMOVED MOST OTHER CASES TO REDUCE CHANCES OF PEOPLE COPYING WORK
 	end case;
 
 	end process;
+
 end alu_arch;
